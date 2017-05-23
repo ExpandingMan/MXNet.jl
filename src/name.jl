@@ -1,6 +1,6 @@
-abstract AbstractNameManager
-typealias NameType Union{Base.Symbol, AbstractString}
-typealias NameCounter Dict{Base.Symbol, Int}
+abstract type AbstractNameManager end
+const NameType = Union{Base.Symbol, AbstractString}
+const NameCounter = Dict{Base.Symbol, Int}
 
 import Base: get!
 
@@ -21,7 +21,7 @@ function _default_get_name!(counter :: NameCounter, name :: NameType, hint :: Na
   return name
 end
 
-type BasicNameManager <: AbstractNameManager
+mutable struct BasicNameManager <: AbstractNameManager
   counter :: NameCounter
 end
 BasicNameManager() = BasicNameManager(NameCounter())

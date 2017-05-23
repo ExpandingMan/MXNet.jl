@@ -49,7 +49,7 @@ s_t &= \rho s_{t-1} + (1-\rho)*(\eta_t*g)^2``
   ADADELTA: An Adaptive Learning Rate Method. arXiv Preprint arXiv:1212.5701.
 """
 
-type AdaDelta <: AbstractOptimizer
+mutable struct AdaDelta <: AbstractOptimizer
   opts  :: AdaDeltaOptions
   state :: OptimizationState
 

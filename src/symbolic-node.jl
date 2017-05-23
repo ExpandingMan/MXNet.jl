@@ -217,7 +217,7 @@ function get_name(self :: mx.SymbolicNode)
     success = Ref(0)
     @mxcall(:MXSymbolGetName, (MX_handle, Ref{char_p}, Ref{Int}), self.handle.value, name, success)
     @assert success[] != -1
-    return Symbol(unsafe_wrap(String, name[]))
+    return Symbol(unsafe_string(name[]))
 end
 
 """
@@ -435,7 +435,8 @@ function Base.getindex(self :: SymbolicNode, idx :: Int)
   return SymbolicNode(MX_SymbolHandle(ref_hdr[]))
 end
 
-import Base: +, .+
+import Base.broadcast
+import Base: +
 function +(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   ret = self
   for arg in args
@@ -447,34 +448,34 @@ function +(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   end
   ret
 end
-function .+(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+function Base.broadcast(::typeof(+), self::SymbolicNode, args::Union{SymbolicNode,Real}...)
   +(self, args...)
 end
 function +(s1 :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
-function .+(s1 :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+function Base.broadcast(::typeof(+), s1::Real, self::SymbolicNode, args::Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
 
-import Base: -, .-
+import Base: -
 function -(self :: SymbolicNode, arg :: SymbolicNode)
   _Minus(self, arg)
 end
-function .-(self :: SymbolicNode, arg :: SymbolicNode)
+function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: SymbolicNode)
   -(self, arg)
 end
 function -(self :: SymbolicNode, arg :: Real)
   _MinusScalar(self, scalar=MX_float(arg))
 end
-function .-(self :: SymbolicNode, arg :: Real)
+function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: Real)
   -(self, arg)
 end
 
 function -(arg :: Real, self :: SymbolicNode)
   _RMinusScalar(self, scalar=arg)
 end
-function .-(arg :: Real, self :: SymbolicNode)
+function Base.broadcast(::typeof(-), arg :: Real, self :: SymbolicNode)
   -(arg, self)
 end
 
@@ -482,8 +483,8 @@ function -(self :: SymbolicNode)
   -(0, self)
 end
 
-import Base: .*, *
-function .*(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+import Base: *
+function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   ret = self
   for arg in args
     if isa(arg, SymbolicNode)
@@ -494,8 +495,8 @@ function .*(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   end
   ret
 end
-function .*(arg :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
-  .*(self, arg, args...)
+function Base.broadcast(::typeof(*), arg :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+  broadcast(*, self, arg, args...)
 end
 function *(arg :: Real, self :: SymbolicNode)
   _MulScalar(self, scalar=arg)
@@ -504,32 +505,32 @@ function *(self :: SymbolicNode, arg :: Real)
   *(arg, self)
 end
 
-import Base: ./, /
-function ./(self :: SymbolicNode, arg :: SymbolicNode)
+import Base: /
+function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: SymbolicNode)
   _Div(self, arg)
 end
-function ./(self :: SymbolicNode, arg :: Real)
+function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: Real)
   _DivScalar(self, scalar=MX_float(arg))
 end
 function /(self :: SymbolicNode, arg :: Real)
-  ./(self, arg)
+  self ./ arg
 end
 function /(arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
-function ./(arg :: Real, self :: SymbolicNode)
+function Base.broadcast(::typeof(/), arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
 
-import Base: .^, ^
-function .^(self :: SymbolicNode, pow :: SymbolicNode)
+import Base: ^
+function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: SymbolicNode)
   _Power(self, pow)
 end
-function .^(self :: SymbolicNode, pow :: AbstractFloat)
+function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: AbstractFloat)
   _PowerScalar(self, scalar=pow)
 end
 function ^(self :: SymbolicNode, pow :: AbstractFloat)
-  .^(self, pow)
+  self .^ pow
 end
 
 function _compose!(node :: SymbolicNode; kwargs...)
@@ -761,11 +762,11 @@ macro chain(layers)
     end
   end
   while true
-    if layers.head == :(=>)
+    if layers.head == :call && layers.args[1] == :(=>)
       new_layer = gensym()
-      push!(exprs, :($new_layer = $(_chain_layer(layers.args[1], last_layer))))
+      push!(exprs, :($new_layer = $(_chain_layer(layers.args[2], last_layer))))
       last_layer = new_layer
-      layers = layers.args[2]
+      layers = layers.args[3]
     else
       push!(exprs, _chain_layer(layers, last_layer))
       break

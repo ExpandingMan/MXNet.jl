@@ -3,23 +3,23 @@
 
 Abstract type of callback functions used in training.
 """
-abstract AbstractCallback
+abstract type AbstractCallback end
 
 """
     AbstractBatchCallback
 
 Abstract type of callbacks to be called every mini-batch.
 """
-abstract AbstractBatchCallback <: AbstractCallback
+abstract type AbstractBatchCallback <: AbstractCallback end
 
 """
     AbstractEpochCallback
 
 Abstract type of callbacks to be called every epoch.
 """
-abstract AbstractEpochCallback <: AbstractCallback
+abstract type AbstractEpochCallback <: AbstractCallback end
 
-type BatchCallback <: AbstractBatchCallback
+mutable struct BatchCallback <: AbstractBatchCallback
   frequency :: Int
   call_on_0 :: Bool
   callback  :: Function
@@ -86,7 +86,7 @@ function speedometer(;frequency::Int=50)
 end
 
 
-type EpochCallback <: AbstractEpochCallback
+mutable struct EpochCallback <: AbstractEpochCallback
   frequency :: Int
   call_on_0 :: Bool
   callback  :: Function

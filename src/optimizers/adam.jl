@@ -28,7 +28,7 @@ Stochastic Optimization*. arXiv:1412.6980 [cs.LG].
 * `weight_decay::Real`: default `0.00001`, weight decay is equivalent
        to adding a global l2 regularizer for all the parameters.
 """
-mutable struct ADAM <: AbstractOptimizer
+@compat mutable struct ADAM <: AbstractOptimizer
   opts  :: ADAMOptions
   state :: OptimizationState
 
@@ -40,7 +40,7 @@ mutable struct ADAM <: AbstractOptimizer
   end
 end
 
-mutable struct ADAMState
+@compat mutable struct ADAMState
   current_lr :: Float64  # current learning rate
   mt         :: NDArray
   vt         :: NDArray

@@ -40,7 +40,7 @@ Epsilon is not included in the typical formula, see [2].
   (http://www.ark.cs.cmu.edu/cdyer/adagrad.pdf)
 """
 
-mutable struct AdaGrad <: AbstractOptimizer
+@compat mutable struct AdaGrad <: AbstractOptimizer
   opts  :: AdaGradOptions
   state :: OptimizationState
 

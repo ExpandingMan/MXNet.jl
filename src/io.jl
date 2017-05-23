@@ -15,7 +15,7 @@ Normally this involves defining:
 * `Base.done(provider, state) -> Bool`
 * `Base.next(provider, state) -> (AbstractDataBatch, AbstractDataProvider)`
 """
-abstract type AbstractDataProvider end
+@compat abstract type AbstractDataProvider end
 
 """
     get_batch_size(provider) -> Int
@@ -53,7 +53,7 @@ function provide_label end
 
    Base type for data provider states.
 """
-abstract type AbstractDataProviderState end
+@compat abstract type AbstractDataProviderState end
 
 """
     AbstractDataBatch
@@ -70,7 +70,7 @@ The following utility functions will be automatically defined:
 * [`load_data!`](@ref)
 * [`load_label!`](@ref)
 """
-abstract type AbstractDataBatch end
+@compat abstract type AbstractDataBatch end
 
 """
     count_samples(provider, batch) -> Int

@@ -1,5 +1,5 @@
 "Exception thrown when an error occurred calling MXNet API."
-immutable MXError <: Exception
+@compat struct MXError <: Exception
   msg :: AbstractString
 end
 
@@ -177,7 +177,7 @@ end
 """Internal use only, this value is used to indicate a required value
 is not specified.
 """
-immutable __Undefined
+@compat struct __Undefined
 end
 
 function _defstruct_impl(is_immutable, name, fields)
@@ -259,7 +259,7 @@ function _defstruct_impl(is_immutable, name, fields)
 
   if is_immutable
     quote
-      immutable $(name) <: $(super_name)
+      @compat struct $(name) <: $(super_name)
         $type_body
       end
 
@@ -267,7 +267,7 @@ function _defstruct_impl(is_immutable, name, fields)
     end
   else
     quote
-      type $(name) <: $(super_name)
+      @compat mutable struct $(name) <: $(super_name)
         $type_body
       end
 

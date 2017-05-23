@@ -1,4 +1,4 @@
-abstract type AbstractNameManager end
+@compat abstract type AbstractNameManager end
 const NameType = Union{Base.Symbol, AbstractString}
 const NameCounter = Dict{Base.Symbol, Int}
 
@@ -21,7 +21,7 @@ function _default_get_name!(counter :: NameCounter, name :: NameType, hint :: Na
   return name
 end
 
-mutable struct BasicNameManager <: AbstractNameManager
+@compat mutable struct BasicNameManager <: AbstractNameManager
   counter :: NameCounter
 end
 BasicNameManager() = BasicNameManager(NameCounter())

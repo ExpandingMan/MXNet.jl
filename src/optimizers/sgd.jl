@@ -28,7 +28,7 @@ Stochastic gradient descent optimizer.
 * `weight_decay::Real`: default `0.0001`, weight decay is equivalent to
        adding a global l2 regularizer to the parameters.
 """
-mutable struct SGD <: AbstractOptimizer
+@compat mutable struct SGD <: AbstractOptimizer
   opts  :: SGDOptions
   state :: OptimizationState
 

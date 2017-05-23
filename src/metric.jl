@@ -8,7 +8,7 @@ interfaces:
 * [`reset!`](@ref)
 * [`get`](@ref)
 """
-abstract type AbstractEvalMetric end
+@compat abstract type AbstractEvalMetric end
 
 """
     hasNDArraySupport(metric) -> Val{true/false}

@@ -3,7 +3,7 @@
 
 The abstract super type of all models in MXNet.jl.
 """
-abstract type AbstractModel end
+@compat abstract type AbstractModel end
 
 """
     FeedForward
@@ -14,7 +14,7 @@ explicitly handling of *time index*, but it is relatively easy to implement
 unrolled RNN / LSTM under this framework (*TODO*: add example). For models
 that handles sequential data explicitly, please use *TODO*...
 """
-mutable struct FeedForward <: AbstractModel
+@compat mutable struct FeedForward <: AbstractModel
   arch        :: SymbolicNode
   ctx         :: Vector{Context}
 

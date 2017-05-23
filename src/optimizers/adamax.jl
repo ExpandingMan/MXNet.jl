@@ -37,7 +37,7 @@ See [1] for further description.
   (http://arxiv.org/abs/1412.6980v8).
 """
 
-mutable struct AdaMax <: AbstractOptimizer
+@compat mutable struct AdaMax <: AbstractOptimizer
   opts  :: AdaMaxOptions
   state :: OptimizationState
 
@@ -49,7 +49,7 @@ mutable struct AdaMax <: AbstractOptimizer
   end
 end
 
-mutable struct AdaMaxState
+@compat mutable struct AdaMaxState
   mt         :: NDArray
   ut         :: NDArray
   beta1Power :: Float64

@@ -3,21 +3,21 @@
 
 Base type for all optimizers.
 """
-abstract type AbstractOptimizer end
+@compat abstract type AbstractOptimizer end
 
 """
     AbstractLearningRateScheduler
 
 Base type for all learning rate scheduler.
 """
-abstract type AbstractLearningRateScheduler end
+@compat abstract type AbstractLearningRateScheduler end
 
 """
     AbstractMomentumScheduler
 
 Base type for all momentum scheduler.
 """
-abstract type AbstractMomentumScheduler end
+@compat abstract type AbstractMomentumScheduler end
 
 
 
@@ -39,7 +39,7 @@ abstract type AbstractMomentumScheduler end
   but unlike the mini-batch count, the iteration count does **not** reset
   in each epoch. So it track the *total* number of mini-batches seen so far.
 """
-mutable struct OptimizationState
+@compat mutable struct OptimizationState
   batch_size :: Int
   curr_epoch :: Int
   curr_batch :: Int
@@ -62,6 +62,7 @@ function get_learning_rate end
 ################################################################################
 # The learning rate module
 module LearningRate
+using Compat
 import ..mx: AbstractLearningRateScheduler, OptimizationState, get_learning_rate
 
 """
@@ -69,7 +70,7 @@ import ..mx: AbstractLearningRateScheduler, OptimizationState, get_learning_rate
 
 Fixed learning rate scheduler always return the same learning rate.
 """
-mutable struct Fixed <: AbstractLearningRateScheduler
+@compat mutable struct Fixed <: AbstractLearningRateScheduler
   learning_rate :: Float64
 end
 get_learning_rate(self :: Fixed, state :: OptimizationState) = self.learning_rate
@@ -80,7 +81,7 @@ get_learning_rate(self :: Fixed, state :: OptimizationState) = self.learning_rat
 ``\eta_t = \eta_0\gamma^t``. Here ``t`` is the epoch count, or the iteration
 count if `decay_on_iteration` is set to true.
 """
-mutable struct Exp <: AbstractLearningRateScheduler
+@compat mutable struct Exp <: AbstractLearningRateScheduler
   learning_rate :: Float64
   gamma         :: Float64
   on_iteration  :: Bool
@@ -98,7 +99,7 @@ get_learning_rate(self :: Exp, state :: OptimizationState) =
 Here ``t`` is the epoch count, or the iteration count if `decay_on_iteration`
 is set to true.
 """
-mutable struct Inv <: AbstractLearningRateScheduler
+@compat mutable struct Inv <: AbstractLearningRateScheduler
   learning_rate :: Float64
   gamma         :: Float64
   power         :: Float64
@@ -137,6 +138,7 @@ end
 ################################################################################
 # The Momentum module
 module Momentum
+using Compat
 import ..mx: AbstractMomentumScheduler, OptimizationState, get_momentum
 
 """
@@ -145,7 +147,7 @@ import ..mx: AbstractMomentumScheduler, OptimizationState, get_momentum
 The null momentum scheduler always returns 0 for momentum. It is also used to
 explicitly indicate momentum should not be used.
 """
-struct Null <: AbstractMomentumScheduler
+@compat struct Null <: AbstractMomentumScheduler
 end
 get_momentum(self :: Null, state :: OptimizationState) = 0.0
 
@@ -154,7 +156,7 @@ get_momentum(self :: Null, state :: OptimizationState) = 0.0
 
 Fixed momentum scheduler always returns the same value.
 """
-mutable struct Fixed <: AbstractMomentumScheduler
+@compat mutable struct Fixed <: AbstractMomentumScheduler
   momentum :: Float64
 end
 get_momentum(self :: Fixed, state :: OptimizationState) = self.momentum
@@ -176,7 +178,7 @@ Here
 * ``\alpha``: default `0.96`
 * ``\mu_0``: default `0.99`
 """
-mutable struct NadamScheduler <: AbstractMomentumScheduler
+@compat mutable struct NadamScheduler <: AbstractMomentumScheduler
   mu0 :: Float64
   delta :: Float64
   gamma :: Float64
@@ -240,7 +242,7 @@ end
 
 Base class for all optimizer options.
 """
-abstract type AbstractOptimizerOptions end
+@compat abstract type AbstractOptimizerOptions end
 
 """
     normalized_gradient(opts, state, weight, grad)

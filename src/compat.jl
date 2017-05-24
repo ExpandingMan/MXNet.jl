@@ -28,6 +28,12 @@ if VERSION < v"0.6.0-dev"
 end
 
 
+# have to import base dotted operators if in 0.5
+if VERSION < v"0.6.0-dev"
+    import Base: .+, .-, .*, ./, .^
+end
+
+
 # this is for declaring broadcasted functions in 0.5
 # TODO this macro should be removed when 0.5 support is dropped
 macro compatdot(fblock)

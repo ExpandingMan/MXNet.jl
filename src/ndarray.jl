@@ -546,13 +546,14 @@ function +(arg0 :: NDArray, args :: Union{Real, NDArray}...)
   ret = copy(arg0, context(arg0))
   add_to!(ret, args...)
 end
-@compat function Base.broadcast(::typeof(+), arg0 :: NDArray, args :: Union{Real, NDArray}...)
+@compatdot function Base.broadcast(::typeof(+), arg0 :: NDArray, args :: Union{Real, NDArray}...)
   +(arg0, args...)
 end
 function +(arg0 :: Real, arg1 :: NDArray, args :: Union{Real, NDArray}...)
   +(arg1, arg0, args...)
 end
-@compat function Base.broadcast(::typeof(+), arg0 :: Real, arg1 :: NDArray, args :: Union{Real, NDArray}...)
+@compatdot function Base.broadcast(::typeof(+), arg0 :: Real, arg1 :: NDArray,
+                                   args :: Union{Real, NDArray}...)
   broadcast(+, arg1, arg0, args...)
 end
 
@@ -584,7 +585,7 @@ function -(arg0 :: NDArray, arg1 :: Union{Real, NDArray})
   ret = copy(arg0, context(arg0))
   sub_from!(ret, arg1)
 end
-@compat function Base.broadcast(::typeof(-), arg0 :: NDArray, arg1 :: Union{Real, NDArray})
+@compatdot function Base.broadcast(::typeof(-), arg0 :: NDArray, arg1 :: Union{Real, NDArray})
   -(arg0, arg1)
 end
 function -(arg0 :: Real, arg1 :: NDArray)
@@ -592,7 +593,7 @@ function -(arg0 :: Real, arg1 :: NDArray)
   add_to!(ret, arg0)
   return ret
 end
-@compat function Base.broadcast(::typeof(-), arg0 :: Real, arg1 :: NDArray)
+@compatdot function Base.broadcast(::typeof(-), arg0 :: Real, arg1 :: NDArray)
   -(arg0, arg1)
 end
 
@@ -623,11 +624,11 @@ import Base: *
 
 Elementwise multiplication of `arg0` and `arg`, could be either scalar or `NDArray`.
 """
-@compat function Base.broadcast(::typeof(*), arg0 :: NDArray, arg :: Union{Real, NDArray})
+@compatdot function Base.broadcast(::typeof(*), arg0 :: NDArray, arg :: Union{Real, NDArray})
   ret = copy(arg0, context(arg0))
   mul_to!(ret, arg)
 end
-@compat function Base.broadcast(::typeof(*), arg0 :: Real, arg :: NDArray)
+@compatdot function Base.broadcast(::typeof(*), arg0 :: Real, arg :: NDArray)
   arg .* arg0
 end
 
@@ -665,7 +666,7 @@ import Base: /
 
 Elementwise dividing an `NDArray` by a scalar or another `NDArray` of the same shape.
 """
-@compat function Base.broadcast(::typeof(/), arg0 :: NDArray, arg :: Union{Real, NDArray})
+@compatdot function Base.broadcast(::typeof(/), arg0 :: NDArray, arg :: Union{Real, NDArray})
   ret = copy(arg0, context(arg0))
   div_from!(ret, arg)
 end

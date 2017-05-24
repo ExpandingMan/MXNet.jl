@@ -448,13 +448,14 @@ function +(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   end
   ret
 end
-@compat function Base.broadcast(::typeof(+), self::SymbolicNode, args::Union{SymbolicNode,Real}...)
+@compatdot function Base.broadcast(::typeof(+), self::SymbolicNode, args::Union{SymbolicNode,Real}...)
   +(self, args...)
 end
 function +(s1 :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
-@compat function Base.broadcast(::typeof(+), s1::Real, self::SymbolicNode, args::Union{SymbolicNode,Real}...)
+@compatdot function Base.broadcast(::typeof(+), s1::Real, self::SymbolicNode,
+                                   args::Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
 
@@ -462,20 +463,20 @@ import Base: -
 function -(self :: SymbolicNode, arg :: SymbolicNode)
   _Minus(self, arg)
 end
-@compat function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: SymbolicNode)
+@compatdot function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: SymbolicNode)
   -(self, arg)
 end
 function -(self :: SymbolicNode, arg :: Real)
   _MinusScalar(self, scalar=MX_float(arg))
 end
-@compat function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: Real)
+@compatdot function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: Real)
   -(self, arg)
 end
 
 function -(arg :: Real, self :: SymbolicNode)
   _RMinusScalar(self, scalar=arg)
 end
-@compat function Base.broadcast(::typeof(-), arg :: Real, self :: SymbolicNode)
+@compatdot function Base.broadcast(::typeof(-), arg :: Real, self :: SymbolicNode)
   -(arg, self)
 end
 
@@ -484,7 +485,7 @@ function -(self :: SymbolicNode)
 end
 
 import Base: *
-@compat function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+@compatdot function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   ret = self
   for arg in args
     if isa(arg, SymbolicNode)
@@ -495,7 +496,8 @@ import Base: *
   end
   ret
 end
-@compat function Base.broadcast(::typeof(*), arg :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+@compatdot function Base.broadcast(::typeof(*), arg :: Real, self :: SymbolicNode,
+                                   args :: Union{SymbolicNode,Real}...)
   broadcast(*, self, arg, args...)
 end
 function *(arg :: Real, self :: SymbolicNode)
@@ -506,10 +508,10 @@ function *(self :: SymbolicNode, arg :: Real)
 end
 
 import Base: /
-@compat function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: SymbolicNode)
+@compatdot function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: SymbolicNode)
   _Div(self, arg)
 end
-@compat function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: Real)
+@compatdot function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: Real)
   _DivScalar(self, scalar=MX_float(arg))
 end
 function /(self :: SymbolicNode, arg :: Real)
@@ -518,15 +520,15 @@ end
 function /(arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
-@compat function Base.broadcast(::typeof(/), arg :: Real, self :: SymbolicNode)
+@compatdot function Base.broadcast(::typeof(/), arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
 
 import Base: ^
-@compat function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: SymbolicNode)
+@compatdot function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: SymbolicNode)
   _Power(self, pow)
 end
-@compat function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: AbstractFloat)
+@compatdot function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: AbstractFloat)
   _PowerScalar(self, scalar=pow)
 end
 function ^(self :: SymbolicNode, pow :: AbstractFloat)
@@ -750,7 +752,7 @@ end
 ################################################################################
 # Utility macros to chain up symbols
 ################################################################################
-if VERSION ≥ v"0.6.0-dev"  # check version for AST change in 0.6.0
+if VERSION ≥ v"0.6.0-dev"  # check version for AST change in 0.6.0, 0.5 code found in compat.jl
     macro chain(layers)
       exprs = []
       last_layer = nothing
@@ -768,31 +770,6 @@ if VERSION ≥ v"0.6.0-dev"  # check version for AST change in 0.6.0
           push!(exprs, :($new_layer = $(_chain_layer(layers.args[2], last_layer))))
           last_layer = new_layer
           layers = layers.args[3]
-        else
-          push!(exprs, _chain_layer(layers, last_layer))
-          break
-        end
-      end
-      return Expr(:block, exprs...)
-    end
-else
-    macro chain(layers)
-      exprs = []
-      last_layer = nothing
-      function _chain_layer(layer, last_layer)
-        if isa(last_layer, Void)
-          esc(layer)
-        else
-          @assert(isa(layer, Expr) && layer.head == :call, "Do not know how to chain up $layer")
-          return Expr(:call, esc(layer.args[1]), last_layer, map(esc, layer.args[2:end])...)
-        end
-      end
-      while true
-        if layers.head == :(=>)
-          new_layer = gensym()
-          push!(exprs, :($new_layer = $(_chain_layer(layers.args[1], last_layer))))
-          last_layer = new_layer
-          layers = layers.args[2]
         else
           push!(exprs, _chain_layer(layers, last_layer))
           break

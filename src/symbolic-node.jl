@@ -448,13 +448,13 @@ function +(self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   end
   ret
 end
-function Base.broadcast(::typeof(+), self::SymbolicNode, args::Union{SymbolicNode,Real}...)
+@compat function Base.broadcast(::typeof(+), self::SymbolicNode, args::Union{SymbolicNode,Real}...)
   +(self, args...)
 end
 function +(s1 :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
-function Base.broadcast(::typeof(+), s1::Real, self::SymbolicNode, args::Union{SymbolicNode,Real}...)
+@compat function Base.broadcast(::typeof(+), s1::Real, self::SymbolicNode, args::Union{SymbolicNode,Real}...)
   +(self, s1, args...)
 end
 
@@ -462,20 +462,20 @@ import Base: -
 function -(self :: SymbolicNode, arg :: SymbolicNode)
   _Minus(self, arg)
 end
-function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: SymbolicNode)
+@compat function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: SymbolicNode)
   -(self, arg)
 end
 function -(self :: SymbolicNode, arg :: Real)
   _MinusScalar(self, scalar=MX_float(arg))
 end
-function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: Real)
+@compat function Base.broadcast(::typeof(-), self :: SymbolicNode, arg :: Real)
   -(self, arg)
 end
 
 function -(arg :: Real, self :: SymbolicNode)
   _RMinusScalar(self, scalar=arg)
 end
-function Base.broadcast(::typeof(-), arg :: Real, self :: SymbolicNode)
+@compat function Base.broadcast(::typeof(-), arg :: Real, self :: SymbolicNode)
   -(arg, self)
 end
 
@@ -484,7 +484,7 @@ function -(self :: SymbolicNode)
 end
 
 import Base: *
-function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+@compat function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   ret = self
   for arg in args
     if isa(arg, SymbolicNode)
@@ -495,7 +495,7 @@ function Base.broadcast(::typeof(*), self :: SymbolicNode, args :: Union{Symboli
   end
   ret
 end
-function Base.broadcast(::typeof(*), arg :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
+@compat function Base.broadcast(::typeof(*), arg :: Real, self :: SymbolicNode, args :: Union{SymbolicNode,Real}...)
   broadcast(*, self, arg, args...)
 end
 function *(arg :: Real, self :: SymbolicNode)
@@ -506,10 +506,10 @@ function *(self :: SymbolicNode, arg :: Real)
 end
 
 import Base: /
-function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: SymbolicNode)
+@compat function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: SymbolicNode)
   _Div(self, arg)
 end
-function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: Real)
+@compat function Base.broadcast(::typeof(/), self :: SymbolicNode, arg :: Real)
   _DivScalar(self, scalar=MX_float(arg))
 end
 function /(self :: SymbolicNode, arg :: Real)
@@ -518,15 +518,15 @@ end
 function /(arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
-function Base.broadcast(::typeof(/), arg :: Real, self :: SymbolicNode)
+@compat function Base.broadcast(::typeof(/), arg :: Real, self :: SymbolicNode)
   _RDivScalar(self, scalar=arg)
 end
 
 import Base: ^
-function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: SymbolicNode)
+@compat function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: SymbolicNode)
   _Power(self, pow)
 end
-function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: AbstractFloat)
+@compat function Base.broadcast(::typeof(^), self :: SymbolicNode, pow :: AbstractFloat)
   _PowerScalar(self, scalar=pow)
 end
 function ^(self :: SymbolicNode, pow :: AbstractFloat)

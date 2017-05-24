@@ -81,7 +81,7 @@ of tensor-based computation.
       C/C++/Python shape (100,1,28,28), while in Julia, the same piece of memory
       have shape (28,28,1,100).
 """
-@compat mutable struct NDArray
+type NDArray
   handle   :: MX_NDArrayHandle
   writable :: Bool
 

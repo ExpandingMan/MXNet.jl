@@ -21,7 +21,7 @@ function _default_get_name!(counter :: NameCounter, name :: NameType, hint :: Na
   return name
 end
 
-@compat mutable struct BasicNameManager <: AbstractNameManager
+type BasicNameManager <: AbstractNameManager
   counter :: NameCounter
 end
 BasicNameManager() = BasicNameManager(NameCounter())

@@ -1,4 +1,4 @@
-@compat mutable struct KVStore
+type KVStore
   handle    :: MX_KVStoreHandle
   updater_c :: Ptr{Void}
   updater   :: Function

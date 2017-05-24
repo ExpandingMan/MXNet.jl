@@ -14,7 +14,7 @@ explicitly handling of *time index*, but it is relatively easy to implement
 unrolled RNN / LSTM under this framework (*TODO*: add example). For models
 that handles sequential data explicitly, please use *TODO*...
 """
-@compat mutable struct FeedForward <: AbstractModel
+type FeedForward <: AbstractModel
   arch        :: SymbolicNode
   ctx         :: Vector{Context}
 

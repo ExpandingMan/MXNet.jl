@@ -38,11 +38,11 @@ function Base.copy(self :: SymbolicNode)
   Base.deepcopy(self)
 end
 
-@compat function (self::SymbolicNode)(args :: SymbolicNode...)
+function (self::SymbolicNode)(args :: SymbolicNode...)
   s = deepcopy(self)
   _compose!(s, args...)
 end
-@compat function (self::SymbolicNode)(;kwargs...)
+function (self::SymbolicNode)(;kwargs...)
   s = deepcopy(self)
   _compose!(s; kwargs...)
 end

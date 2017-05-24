@@ -47,7 +47,7 @@ at their default values.
   [http://www.cs.toronto.edu/~fritz/absps/momentum.pdf]
   (http://www.cs.toronto.edu/~fritz/absps/momentum.pdf)
 """
-@compat mutable struct Nadam <: AbstractOptimizer
+type Nadam <: AbstractOptimizer
   opts  :: NadamOptions
   state :: OptimizationState
 

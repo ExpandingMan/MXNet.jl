@@ -757,7 +757,7 @@ macro chain(layers)
     last_layer = nothing
 
     function _chain_layer(layer, last_layer)
-        if last_layer isa Void
+        if isa(last_layer, Void)
             return esc(layer)
         else
             if @capture(layer, f_(x__))

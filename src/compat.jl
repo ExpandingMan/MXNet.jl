@@ -22,3 +22,11 @@ macro compatdot(fblock)
         end
     end)
 end
+
+macro compatmul(expr1, expr2)
+    if VERSION ≥ v"0.6.0-dev"
+        esc(:(broadcast(*, $expr1, $expr2)))
+    else
+        esc(:($expr1 .* $expr2))
+    end
+end
